@@ -20,10 +20,7 @@ export type StatementType =
     | 'mastercard';
 
 export type ExpenseType =
-    | 'shopping'
-    | 'food'
-    | 'groceries'
-    | 'subscriptions';
+    | "shopping" | "food" | "groceries" | "subscriptions" | "bills" | "services" | "payments";
 
 export type FormattedExpense = {
     id: string;

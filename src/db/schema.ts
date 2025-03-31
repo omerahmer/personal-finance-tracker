@@ -1,7 +1,7 @@
 import { pgTable, text, numeric, date, timestamp, pgEnum, uuid } from 'drizzle-orm/pg-core';
 
 export const statementTypeEnum = pgEnum('statement_type', ['applecard', 'chase', 'mastercard'])
-export const expenseTypeEnum = pgEnum('expense_type', ['shopping', 'food', 'groceries', 'subscriptions']);
+export const expenseTypeEnum = pgEnum('expense_type', ['shopping', 'food', 'groceries', 'subscriptions', 'bills', 'services', 'payments']);
 
 export const transactions = pgTable('transactions', {
     id: uuid('id').primaryKey().defaultRandom(),

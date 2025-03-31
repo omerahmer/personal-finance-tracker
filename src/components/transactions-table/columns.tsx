@@ -22,7 +22,7 @@ export const transactionsColumns: ColumnDef<FormattedExpense>[] = [
   },
   {
     accessorKey: 'statementType',
-    header: 'Method',
+    header: 'Payment Method',
   },
   {
     accessorKey: 'expenseType',
