@@ -1,12 +1,40 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { desc, sql } from 'drizzle-orm';
-import { transactions } from '../../../db/schema';
+import { transactions, balances } from '../../../db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { StatementType, ExpenseType, ExpensePOSTRequest, ExpenseGETResponse } from '@/lib/api';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
 const db = drizzle(pool);
+
+async function getTotalBalance(): Promise<number> {
+    const statementTypes: StatementType[] = ['applecard', 'chase', 'mastercard'];
+    let total = 0;
+
+    for (const type of statementTypes) {
+        const latest = await db
+            .select({ balance: sql<number>`CAST(balance AS DOUBLE PRECISION)` })
+            .from(balances)
+            .where(sql`${balances.statementType} = ${type}`)
+            .orderBy(desc(balances.timestamp))
+            .limit(1);
+
+        if (latest.length > 0) {
+            total += latest[0].balance;
+        }
+    }
+
+    return total;
+}
+
+async function getTotalAccounts(): Promise<number> {
+    const result = await db
+        .select({ count: sql<number>`COUNT(DISTINCT ${balances.statementType})` })
+        .from(balances);
+
+    return result[0]?.count ?? 0;
+}
 
 export async function GET(request: NextRequest) {
     console.log('/api/expense');
@@ -16,7 +44,12 @@ export async function GET(request: NextRequest) {
     const start = new Date(searchParams.get('start') || '1970-01-01');
     const end = new Date(searchParams.get('end') || '2030-01-01');
 
-    const expenseResponse: ExpenseGETResponse = { spending: 0, transactions: [] };
+    const expenseResponse: ExpenseGETResponse = {
+        spending: 0,
+        transactions: [],
+        accounts: 0,
+        netWorth: '0'
+    };
 
     const totalSpending = await db
         .select({ totalPrice: sql<number>`SUM(${transactions.price})` })
@@ -33,6 +66,9 @@ export async function GET(request: NextRequest) {
         )
         .orderBy(desc(transactions.date));
 
+    const netWorth = await getTotalBalance();
+    const accounts = await getTotalAccounts();
+
     expenseResponse.spending = Number(totalSpending[0]?.totalPrice || 0);
     expenseResponse.transactions = transactionRecords.map((transaction) => ({
         id: transaction.id,
@@ -43,6 +79,8 @@ export async function GET(request: NextRequest) {
         price: Number(transaction.price),
         location: transaction.location,
     }));
+    expenseResponse.netWorth = netWorth.toFixed(2);
+    expenseResponse.accounts = accounts;
 
     console.log('Transactions:', expenseResponse.transactions);
     return NextResponse.json(expenseResponse);
@@ -55,8 +93,8 @@ export async function POST(request: NextRequest) {
     const transactionData = transactionList.map((transaction) => ({
         id: transaction.id,
         date: transaction.date,
-        statementType: statementType as "applecard" | "chase" | "mastercard",
-        expenseType: transaction.expenseType as "shopping" | "food" | "groceries" | "subscriptions",
+        statementType: statementType as StatementType,
+        expenseType: transaction.expenseType as ExpenseType,
         vendor: transaction.vendor,
         price: transaction.price.toString(),
         location: transaction.location,

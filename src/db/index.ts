@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import { transactions, balances } from './schema';
 import { StatementType, ExpenseType } from '../lib/api';
 
@@ -109,8 +109,7 @@ export async function deleteBalance(id: string) {
 }
 
 // Calculate total balance across all accounts
-export async function getTotalBalance() {
-    // For each statement type, get the latest balance and sum them
+export async function getTotalBalance(): Promise<number> {
     const statementTypes: StatementType[] = ['applecard', 'chase', 'mastercard'];
     let total = 0;
 
@@ -122,6 +121,14 @@ export async function getTotalBalance() {
     }
 
     return total;
+}
+
+export async function getTotalAccounts(): Promise<number> {
+    const result = await db
+        .select({ count: sql<number>`COUNT(DISTINCT ${balances.statementType})` })
+        .from(balances);
+
+    return result[0]?.count ?? 0;
 }
 
 // Connect to database and handle errors

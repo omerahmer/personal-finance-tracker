@@ -67,8 +67,6 @@ export async function POST(request: Request) {
     }
 
     // Flatten all detected expense rows into a single list
-    // e.x.: ['CVS Pharmacy $10.36\nSanta Cruz, CA\n2%\nYesterday', ...]
-
     console.log('Compressing documents...');
     const expenses: string[] = [];
 

@@ -1,3 +1,4 @@
+import InfoCardContainer from "@/components/info-card-container";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ModeToggle } from "@/components/ui/theme-picker";
@@ -21,6 +22,13 @@ export default function Home() {
             </Button>
           </Link>
         </div>
+      </div>
+      <InfoCardContainer />
+      <div className="col-span-3">
+        {/*<WeeklySpending />*/}
+      </div>
+      <div className="col-span-5">
+        {/*<TableCard />*/}
       </div>
     </div>
   );
