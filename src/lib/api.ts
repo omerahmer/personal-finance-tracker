@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export const BUCKET = ''
 export const EXPIRATION = 3600
 
@@ -45,6 +47,8 @@ export type ExtractRequest = {
 }
 
 export type ExpenseGETResponse = {
+    accounts: ReactNode;
+    netWorth: string;
     spending: number;
     transactions: FormattedExpense[];
 }
