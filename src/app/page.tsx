@@ -3,15 +3,16 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { ModeToggle } from "@/components/ui/theme-picker";
 import { PlusIcon } from "lucide-react";
+import WeeklySpending from "@/components/weekly-spending"
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="grid grid-cols-8 gap-8 m-8">
       <div className="flex flex-row justify-between col-span-full">
-        <h2 className="text-4xl font-bold tracking-tight transition-colors scroll-m-20 first:mt-0">
-          Personal Finance Dashboard
-        </h2>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-green-400 text-transparent bg-clip-text">
+          Personal Finance Tracker
+        </h1>
         <div className="flex flex-row justify-between gap-2">
           <ModeToggle />
           <DatePicker />
@@ -25,7 +26,7 @@ export default function Home() {
       </div>
       <InfoCardContainer />
       <div className="col-span-3">
-        {/*<WeeklySpending />*/}
+        <WeeklySpending />
       </div>
       <div className="col-span-5">
         {/*<TableCard />*/}

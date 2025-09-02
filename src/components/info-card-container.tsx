@@ -20,7 +20,7 @@ export default function InfoCardContainer() {
                     isLoading ? (
                         <Skeleton className="w-full h-4" />
                     ) : (
-                        '$' + (data as ExpenseGETResponse).spending
+                        '$' + ((data as ExpenseGETResponse)?.spending ?? 0)
                     )
                 }
                 Icon={Banknote}
@@ -31,7 +31,7 @@ export default function InfoCardContainer() {
                     isLoading ? (
                         <Skeleton className="w-full h-4" />
                     ) : (
-                        (data as ExpenseGETResponse).transactions.length
+                        '$' + ((data as ExpenseGETResponse)?.spending ?? 0)
                     )
                 }
                 Icon={Hash}
@@ -42,7 +42,7 @@ export default function InfoCardContainer() {
                     isLoading ? (
                         <Skeleton className="w-full h-4" />
                     ) : (
-                        '$' + (data as ExpenseGETResponse).netWorth
+                            '$' + ((data as ExpenseGETResponse)?.netWorth ?? 0)
                     )
                 }
                 Icon={DollarSign}
@@ -53,7 +53,7 @@ export default function InfoCardContainer() {
                     isLoading ? (
                         <Skeleton className="w-full h-4" />
                     ) : (
-                        (data as ExpenseGETResponse).accounts
+                        ((data as ExpenseGETResponse)?.accounts ?? 0)
                     )
                 }
                 Icon={Landmark}
